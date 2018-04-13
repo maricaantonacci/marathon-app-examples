@@ -1,0 +1,53 @@
+{
+    "id": "elasticsearch",
+    "labels": {
+        "HAPROXY_GROUP": "internal",
+        "HAPROXY_0_ENABLED": "true",
+        "HAPROXY_1_ENABLED": "true"
+    },
+    "container": {
+      "type": "DOCKER",
+      "docker": {
+        "image": "docker.elastic.co/elasticsearch/elasticsearch:6.2.3",
+        "parameters": [
+        {
+          "key": "ulimit",
+          "value": "nofile=65536:65536"
+        },
+        { "key": "ulimit",
+          "value": "memlock=-1:-1"
+        }
+        ],
+        "network": "BRIDGE",
+        "portMappings": [{
+          "containerPort": 9200,
+          "servicePort": 19200,
+          "protocol": "tcp" 
+        },
+        {
+          "containerPort": 9300,
+          "servicePort": 19300,
+          "protocol": "tcp"
+        }
+        ]
+      },
+      "volumes": [
+        {
+          "containerPath": "/usr/share/elasticsearch/data",
+          "external": {
+            "name": "elasticsearch-data",
+            "provider": "dvdi",
+            "options": { "dvdi/driver": "rexray" }
+            },
+          "mode": "RW"
+        }
+      ]
+    },
+    "env": {
+      "cluster.name": "escluster",
+      "bootstrap.memory_lock": "true"
+    },
+    "instances": 1,
+    "cpus": 2,
+    "mem": 4096
+}
